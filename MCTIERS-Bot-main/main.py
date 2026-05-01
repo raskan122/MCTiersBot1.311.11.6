@@ -16,6 +16,25 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
+# --- KUBERNS KEEP ALIVE ADDITION ---
+from flask import Flask
+from threading import Thread
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Bot is alive and listening on port 8000!"
+
+def run():
+    # This satisfies the Kuberns requirement to bind to 0.0.0.0:8000
+    app.run(host='0.0.0.0', port=8000)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+# -----------------------------------
+
 import config
 from utils.ui import WaitlistView, QueueView
 
@@ -60,4 +79,7 @@ class TestingBot(commands.Bot):
 bot = TestingBot()
 
 if BOT_TOKEN:
+    # Start the web server so Kuberns doesn't kill the bot
+    keep_alive() 
+    logging.info("Web server started on port 8000. Starting Discord Bot...")
     bot.run(BOT_TOKEN)
