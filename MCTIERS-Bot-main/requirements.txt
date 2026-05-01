@@ -2,4 +2,4 @@ discord.py
 python-dotenv
 mysql-connector-python
 aiohttp
-discord-html-transcripts
+chat-exporter
